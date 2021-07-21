@@ -259,22 +259,44 @@ func InitConfig() error {
 		gAppConfig.StateLogInterval = 1
 	}
 
+	// databaseType := cdb.GetOrDefaultString(ConfigDatabaseType, "oracle")
+	// if strings.EqualFold(databaseType, "oracle") {
+	// 	gAppConfig.DatabaseType = Oracle
+	// 	if gAppConfig.ChildExecutable == "" {
+	// 		gAppConfig.ChildExecutable = "oracleworker"
+	// 	}
+	// } else {
+	// 	if strings.EqualFold(databaseType, "mysql") {
+	// 		gAppConfig.DatabaseType = MySQL
+	// 		if gAppConfig.ChildExecutable == "" {
+	// 			gAppConfig.ChildExecutable = "mysqlworker"
+	// 		}
+	// 	} else {
+	// 		// db type is not supported
+	// 		return errors.New("database type must be either Oracle or MySQL")
+	// 	}
+	// }
+
 	databaseType := cdb.GetOrDefaultString(ConfigDatabaseType, "oracle")
 	if strings.EqualFold(databaseType, "oracle") {
 		gAppConfig.DatabaseType = Oracle
 		if gAppConfig.ChildExecutable == "" {
 			gAppConfig.ChildExecutable = "oracleworker"
 		}
-	} else {
-		if strings.EqualFold(databaseType, "mysql") {
-			gAppConfig.DatabaseType = MySQL
-			if gAppConfig.ChildExecutable == "" {
-				gAppConfig.ChildExecutable = "mysqlworker"
-			}
-		} else {
-			// db type is not supported
-			return errors.New("database type must be either Oracle or MySQL")
+	} else if strings.EqualFold(databaseType, "mysql") {
+		gAppConfig.DatabaseType = MySQL
+		if gAppConfig.ChildExecutable == "" {
+			gAppConfig.ChildExecutable = "mysqlworker"
 		}
+	} else if strings.EqualFold(databaseType, "postgres") {
+		gAppConfig.DatabaseType = PostgreSQL
+		if gAppConfig.ChildExecutable == "" {
+			gAppConfig.ChildExecutable = "postgresworker"
+			// fmt.Println("I get to child executable in config")
+		}
+	} else {
+		// db type is not supported
+		return errors.New("database type must be either Oracle, MySQL, or PostgreSQL")
 	}
 
 	gAppConfig.EnableSharding = cdb.GetOrDefaultBool("enable_sharding", false)
